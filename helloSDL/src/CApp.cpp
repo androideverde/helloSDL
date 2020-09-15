@@ -1,6 +1,9 @@
 #include <CApp.h>
 
 #include <chrono>
+#include <algorithm>
+
+#include <SDL_image.h>
 
 CApp::CApp()
 	: mRunning(true)
@@ -21,14 +24,15 @@ int CApp::OnExecute()
 	
 	// game loop
 	auto previousTime = std::chrono::system_clock::now();
-	double lag = 0.0;
+	int lag_ms = 0;
 	while (mRunning)
 	{
 		// adjust time step
 		auto currentTime = std::chrono::system_clock::now();
-		std::chrono::duration<double> elapsedTime = currentTime - previousTime;
+		int elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - previousTime).count();
 		previousTime = currentTime;
-		lag += elapsedTime.count() * 1000; // in milliseconds
+		elapsed_ms = std::max(200, elapsed_ms);
+		lag_ms += elapsed_ms;
 		
 		// process inputs
 		while (SDL_PollEvent(&event))
@@ -36,10 +40,10 @@ int CApp::OnExecute()
 			OnEvent(&event);
 		}
 		
-		while (lag >= MS_PER_UPDATE)
+		while (lag_ms >= MS_PER_UPDATE)
 		{
-			OnLoop();
-			lag -= MS_PER_UPDATE;
+			OnLoop(MS_PER_UPDATE / 1000);
+			lag_ms -= MS_PER_UPDATE;
 		}
 		OnRender();
 	}
@@ -56,14 +60,48 @@ bool CApp::OnInit()
 	{
 		return false;
 	}
-	mWindow = SDL_CreateWindow("SDL Tutorial", 0, 0, 640, 480, SDL_WINDOW_SHOWN);
+	mWindow = SDL_CreateWindow("SDL Tutorial", 0, 0, 755, 600, SDL_WINDOW_SHOWN);
 	if (mWindow == nullptr)
 	{
 		return false;
 	}
 	mSurface = SDL_GetWindowSurface(mWindow);
-	SDL_FillRect(mSurface, nullptr, SDL_MapRGB(mSurface->format, 0xFF, 0xFF, 0xFF));
+	//SDL_FillRect(surface, nullptr, SDL_MapRGB(surface->format, 0xFF, 0xFF, 0xFF));
+	if (!SetBackground()) {
+		return false;
+	}
 	return true;
+}
+
+bool CApp::SetBackground()
+{
+	SDL_Surface* background = LoadImage("../assets/BackGround.jpg");
+	if (background == nullptr)
+	{
+		return false;
+	}
+	else
+	{
+		SDL_Rect pos;
+		pos.x = 0;
+		pos.y = 0;
+		SDL_BlitSurface(background, nullptr, mSurface, &pos);
+		SDL_FreeSurface(background);
+	}
+	return true;
+}
+
+SDL_Surface* CApp::LoadImage(const std::string& file_str)
+{
+	SDL_Surface* temp;
+	const char* file = file_str.c_str();
+	temp = IMG_Load(file);
+	if (temp == nullptr)
+	{
+		printf( "Unable to load image %s! SDL Error: %s\n", file, SDL_GetError() );
+		return nullptr;
+	}
+	return temp;
 }
 
 void CApp::OnEvent(SDL_Event* event)
@@ -74,7 +112,7 @@ void CApp::OnEvent(SDL_Event* event)
 	}
 }
 
-void CApp::OnLoop()
+void CApp::OnLoop(float delta_time)
 {
 }
 
