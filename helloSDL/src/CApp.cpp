@@ -85,6 +85,8 @@ void CApp::OnRender()
 
 void CApp::OnCleanup()
 {
+	SDL_FreeSurface(mSurface);
+	mSurface = nullptr;
 	SDL_DestroyWindow(mWindow);
 	mWindow = nullptr;
 	SDL_Quit();
