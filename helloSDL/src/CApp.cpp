@@ -10,6 +10,7 @@
 CApp::CApp()
 	: mRunning(true)
 	, mSurface(nullptr)
+	, mBackground(nullptr)
 	, mWindow(nullptr)
 	, mRedCandy(0, 0, 0, 0, "../assets/Red.png")
 {
@@ -69,7 +70,6 @@ bool CApp::OnInit()
 		return false;
 	}
 	mSurface = SDL_GetWindowSurface(mWindow);
-	//SDL_FillRect(surface, nullptr, SDL_MapRGB(surface->format, 0xFF, 0xFF, 0xFF));
 	if (!SetBackground()) {
 		return false;
 	}
@@ -78,19 +78,23 @@ bool CApp::OnInit()
 
 bool CApp::SetBackground()
 {
-	SDL_Surface* background = Utils::LoadImage("../assets/BackGround.jpg");
-	if (background == nullptr) {
+	mBackground = Utils::LoadImage("../assets/BackGround.jpg");
+	if (mBackground == nullptr) {
 		return false;
 	}
 	SDL_Rect pos;
 	pos.x = 0;
 	pos.y = 0;
-	SDL_BlitSurface(background, nullptr, mSurface, &pos);
+	SDL_BlitSurface(mBackground, nullptr, mSurface, &pos);
+	return true;
+}
+
+void CApp::RenderCandies()
+{
+	SDL_Rect pos;
 	pos.x = mRedCandy.getPos().x;
 	pos.y = mRedCandy.getPos().y;
 	SDL_BlitSurface(mRedCandy.getSurface(), nullptr, mSurface, &pos);
-	SDL_FreeSurface(background);
-	return true;
 }
 
 void CApp::OnEvent(SDL_Event* event)
@@ -103,10 +107,13 @@ void CApp::OnEvent(SDL_Event* event)
 
 void CApp::OnLoop(float delta_time)
 {
+	mRedCandy.MoveBy(1, 1);
 }
 
 void CApp::OnRender()
 {
+	SDL_BlitSurface(mBackground, nullptr, mSurface, nullptr);
+	RenderCandies();
 	SDL_UpdateWindowSurface(mWindow);
 }
 
@@ -114,6 +121,8 @@ void CApp::OnCleanup()
 {
 	SDL_FreeSurface(mSurface);
 	mSurface = nullptr;
+	SDL_FreeSurface(mBackground);
+	mBackground = nullptr;
 	SDL_DestroyWindow(mWindow);
 	mWindow = nullptr;
 	SDL_Quit();
