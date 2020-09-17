@@ -4,11 +4,14 @@
 #include <algorithm>
 
 #include <SDL_image.h>
+#include <Utils.h>
+#include <CCandy.h>
 
 CApp::CApp()
 	: mRunning(true)
 	, mSurface(nullptr)
 	, mWindow(nullptr)
+	, mRedCandy(0, 0, 0, 0, "../assets/Red.png")
 {
 }
 
@@ -75,33 +78,19 @@ bool CApp::OnInit()
 
 bool CApp::SetBackground()
 {
-	SDL_Surface* background = LoadImage("../assets/BackGround.jpg");
-	if (background == nullptr)
-	{
+	SDL_Surface* background = Utils::LoadImage("../assets/BackGround.jpg");
+	if (background == nullptr) {
 		return false;
 	}
-	else
-	{
-		SDL_Rect pos;
-		pos.x = 0;
-		pos.y = 0;
-		SDL_BlitSurface(background, nullptr, mSurface, &pos);
-		SDL_FreeSurface(background);
-	}
+	SDL_Rect pos;
+	pos.x = 0;
+	pos.y = 0;
+	SDL_BlitSurface(background, nullptr, mSurface, &pos);
+	pos.x = mRedCandy.getPos().x;
+	pos.y = mRedCandy.getPos().y;
+	SDL_BlitSurface(mRedCandy.getSurface(), nullptr, mSurface, &pos);
+	SDL_FreeSurface(background);
 	return true;
-}
-
-SDL_Surface* CApp::LoadImage(const std::string& file_str)
-{
-	SDL_Surface* temp;
-	const char* file = file_str.c_str();
-	temp = IMG_Load(file);
-	if (temp == nullptr)
-	{
-		printf( "Unable to load image %s! SDL Error: %s\n", file, SDL_GetError() );
-		return nullptr;
-	}
-	return temp;
 }
 
 void CApp::OnEvent(SDL_Event* event)

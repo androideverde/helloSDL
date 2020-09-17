@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL.h>
+#include <CCandy.h>
 #include <string>
 
 class CApp
@@ -18,6 +19,6 @@ private:
 	SDL_Surface* mSurface;
 	SDL_Window* mWindow;
 	const int MS_PER_UPDATE = 16;
-	SDL_Surface* LoadImage(const std::string& file_str);
 	bool SetBackground();
+	CCandy mRedCandy;
 };
