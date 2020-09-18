@@ -19,8 +19,10 @@ private:
 	SDL_Surface* mSurface;
 	SDL_Surface* mBackground;
 	SDL_Window* mWindow;
-	const int MS_PER_UPDATE = 16;
-	bool SetBackground();
-	void RenderCandies();
 	CCandy mRedCandy;
+	const int MS_PER_UPDATE = 16;
+
+	bool LoadBackground();
+	bool LoadResources();
+	void RenderCandies();
 };

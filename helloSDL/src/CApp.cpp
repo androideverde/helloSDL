@@ -72,7 +72,16 @@ bool CApp::OnInit()
 		return false;
 	}
 	mSurface = SDL_GetWindowSurface(mWindow);
-	if (!SetBackground())
+	if (!LoadResources())
+	{
+		return false;
+	}
+	return true;
+}
+
+bool CApp::LoadResources()
+{
+	if (!LoadBackground())
 	{
 		return false;
 	}
@@ -83,7 +92,7 @@ bool CApp::OnInit()
 	return true;
 }
 
-bool CApp::SetBackground()
+bool CApp::LoadBackground()
 {
 	mBackground = Utils::LoadImage("../assets/BackGround.jpg");
 	if (mBackground == nullptr) {
