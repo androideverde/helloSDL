@@ -2,22 +2,23 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 14)
 
 # set the project name
-project(helloSDL)
+set (PROJECT_NAME helloDSL)
+project(${PROJECT_NAME})
 
 # add the executable
-add_executable(helloSDL)
+add_executable(${PROJECT_NAME})
 
 # add SDL library dependency
 include_directories(/Library/Frameworks/SDL2.framework/Headers)
-target_link_libraries(helloSDL /Library/Frameworks/SDL2.framework/SDL2)
+target_link_libraries(${PROJECT_NAME} /Library/Frameworks/SDL2.framework/SDL2)
 
 # add SDL_image library dependency
 include_directories(/Library/Frameworks/SDL2_image.framework/Headers)
-target_link_libraries(helloSDL /Library/Frameworks/SDL2_image.framework/SDL2_image)
+target_link_libraries(${PROJECT_NAME} /Library/Frameworks/SDL2_image.framework/SDL2_image)
 
 # add the sources
 file(GLOB project_files "src/*.cpp" "include/*.h")
-target_sources(helloSDL PRIVATE ${project_files})
+target_sources(${PROJECT_NAME} PRIVATE ${project_files})
 
 # add the includes
 include_directories(include)
@@ -26,7 +27,7 @@ include_directories(include)
 set (source "${CMAKE_SOURCE_DIR}/assets")
 set (destination "${CMAKE_CURRENT_BINARY_DIR}/assets")
 add_custom_command(
- TARGET helloSDL POST_BUILD
+ TARGET ${PROJECT_NAME} POST_BUILD
  COMMAND ${CMAKE_COMMAND} -E create_symlink ${source} ${destination}
  DEPENDS ${destination}
  COMMENT "symbolic link resources folder from ${source} => ${destination}"
