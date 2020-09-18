@@ -2,15 +2,17 @@
 
 #include <SDL.h>
 #include <CCandy.h>
+#include <CEvent.h>
 #include <string>
 
-class CApp
+class CApp : public CEvent
 {
 public:
 	CApp();
 	int OnExecute();
 	bool OnInit();
 	void OnEvent(SDL_Event* event);
+	void OnExit();
 	void OnLoop(float delta_time);
 	void OnRender();
 	void OnCleanup();

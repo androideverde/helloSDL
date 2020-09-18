@@ -111,10 +111,12 @@ void CApp::RenderCandies()
 
 void CApp::OnEvent(SDL_Event* event)
 {
-	if (event->type == SDL_QUIT)
-	{
-		mRunning = false;
-	}
+	CEvent::OnEvent(event);
+}
+
+void CApp::OnExit()
+{
+	mRunning = false;
 }
 
 void CApp::OnLoop(float delta_time)
