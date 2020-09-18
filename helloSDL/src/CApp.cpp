@@ -119,6 +119,22 @@ void CApp::OnExit()
 	mRunning = false;
 }
 
+void CApp::OnMouseMove(int x, int y, int delta_x, int delta_y, bool l_button, bool r_button, bool m_button)
+{
+}
+
+void CApp::OnLButtonDown(int x, int y)
+{
+}
+
+void CApp::OnRButtonDown(int x, int y)
+{
+}
+
+void CApp::OnMButtonDown(int x, int y)
+{
+}
+
 void CApp::OnLoop(float delta_time)
 {
 	int delta_x = mRedCandy.getVelocity()[0] * delta_time;
