@@ -14,6 +14,8 @@ CApp::CApp()
 	, mBackground(nullptr)
 	, mWindow(nullptr)
 	, mRedCandy(0, 0, 150, 100)
+	, mYellowCandy(400, 300, 0, 0)
+	, mRotating(false)
 {
 }
 
@@ -89,6 +91,10 @@ bool CApp::LoadResources()
 	{
 		return false;
 	}
+	if (!mYellowCandy.LoadImage("../assets/Yellow.png"))
+	{
+		return false;
+	}
 	return true;
 }
 
@@ -107,6 +113,9 @@ void CApp::RenderCandies()
 	pos.x = mRedCandy.getPos().x;
 	pos.y = mRedCandy.getPos().y;
 	SDL_BlitSurface(mRedCandy.getSurface(), nullptr, mSurface, &pos);
+	pos.x = mYellowCandy.getPos().x;
+	pos.y = mYellowCandy.getPos().y;
+	SDL_BlitSurface(mYellowCandy.getSurface(), nullptr, mSurface, &pos);
 }
 
 void CApp::OnEvent(SDL_Event* event)
@@ -121,10 +130,15 @@ void CApp::OnExit()
 
 void CApp::OnMouseMove(int x, int y, int delta_x, int delta_y, bool l_button, bool r_button, bool m_button)
 {
+	if (mRotating)
+	{
+		mYellowCandy.SetPos(x, y);
+	}
 }
 
 void CApp::OnLButtonDown(int x, int y)
 {
+	mRotating ? mRotating = false : mRotating = true;
 }
 
 void CApp::OnRButtonDown(int x, int y)

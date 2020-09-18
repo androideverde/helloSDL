@@ -26,7 +26,9 @@ private:
 	SDL_Surface* mBackground;
 	SDL_Window* mWindow;
 	CCandy mRedCandy;
+	CCandy mYellowCandy;
 	const int MS_PER_UPDATE = 16;
+	bool mRotating;
 
 	bool LoadBackground();
 	bool LoadResources();
