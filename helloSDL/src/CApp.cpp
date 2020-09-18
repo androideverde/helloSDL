@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <algorithm>
+#include <thread>
 
 #include <SDL_image.h>
 #include <Utils.h>
@@ -12,7 +13,7 @@ CApp::CApp()
 	, mSurface(nullptr)
 	, mBackground(nullptr)
 	, mWindow(nullptr)
-	, mRedCandy(0, 0, 0, 0, "../assets/Red.png")
+	, mRedCandy(0, 0, 150, 100)
 {
 }
 
@@ -46,10 +47,11 @@ int CApp::OnExecute()
 		
 		while (lag_ms >= MS_PER_UPDATE)
 		{
-			OnLoop(MS_PER_UPDATE / 1000);
+			OnLoop(MS_PER_UPDATE / 1000.0f);
 			lag_ms -= MS_PER_UPDATE;
 		}
 		OnRender();
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 	
 	// destroy everything
@@ -70,7 +72,12 @@ bool CApp::OnInit()
 		return false;
 	}
 	mSurface = SDL_GetWindowSurface(mWindow);
-	if (!SetBackground()) {
+	if (!SetBackground())
+	{
+		return false;
+	}
+	if (!mRedCandy.LoadImage("../assets/Red.png"))
+	{
 		return false;
 	}
 	return true;
@@ -82,10 +89,6 @@ bool CApp::SetBackground()
 	if (mBackground == nullptr) {
 		return false;
 	}
-	SDL_Rect pos;
-	pos.x = 0;
-	pos.y = 0;
-	SDL_BlitSurface(mBackground, nullptr, mSurface, &pos);
 	return true;
 }
 
@@ -107,7 +110,9 @@ void CApp::OnEvent(SDL_Event* event)
 
 void CApp::OnLoop(float delta_time)
 {
-	mRedCandy.MoveBy(1, 1);
+	int delta_x = mRedCandy.getVelocity()[0] * delta_time;
+	int delta_y = mRedCandy.getVelocity()[1] * delta_time;
+	mRedCandy.MoveBy(delta_x, delta_y);
 }
 
 void CApp::OnRender()
