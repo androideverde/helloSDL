@@ -2,39 +2,41 @@
 
 #include <Utils.h>
 
-CCandy::CCandy(int x, int y, int vx, int vy)
-	: mPos{x, y}
+CCandy::CCandy(int x, int y, int vx, int vy, const std::string& imagePath)
+	: mRect{x, y, 0, 0}
 	, mVelocity{vx, vy}
-	, mImage(nullptr)
+	, mImagePath(imagePath)
+	, mImageTex(nullptr)
 {
 }
 
 CCandy::~CCandy()
 {
-	SDL_FreeSurface(mImage);
-	mImage = nullptr;
+	SDL_DestroyTexture(mImageTex);
+	mImageTex = nullptr;
+}
+
+bool CCandy::LoadTexture(SDL_Renderer* renderer)
+{
+	mImageTex = Utils::LoadImage(mImagePath, renderer);
+	if (mImageTex == nullptr)
+	{
+		return false;
+	}
+	SDL_QueryTexture(mImageTex, nullptr, nullptr, &mRect.w, &mRect.h);
+	return true;
 }
 
 void CCandy::MoveBy(int delta_x, int delta_y)
 {
-	mPos.x += delta_x;
-	mPos.y += delta_y;
-	mPos.x %= 755;
-	mPos.y %= 600;
+	mRect.x += delta_x;
+	mRect.y += delta_y;
+	mRect.x %= 755;
+	mRect.y %= 600;
 }
 
 void CCandy::SetPos(int x, int y)
 {
-	mPos.x = x;
-	mPos.y = y;
-}
-
-bool CCandy::LoadImage(const std::string& file_path)
-{
-	mImage = Utils::LoadImage(file_path);
-	if (mImage == nullptr)
-	{
-		return false;
-	}
-	return true;
+	mRect.x = x;
+	mRect.y = y;
 }

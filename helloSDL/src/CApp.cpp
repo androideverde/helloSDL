@@ -10,12 +10,12 @@
 
 CApp::CApp()
 	: mRunning(true)
-	, mSurface(nullptr)
-	, mBackground(nullptr)
 	, mWindow(nullptr)
-	, mRedCandy(0, 0, 150, 100)
-	, mYellowCandy(400, 300, 0, 0)
+	, mRedCandy(0, 0, 150, 100, "../assets/Red.png")
+	, mYellowCandy(400, 300, 0, 0, "../assets/Yellow.png")
 	, mRotating(false)
+	, mRenderer(nullptr)
+	, mBackground(nullptr)
 {
 }
 
@@ -73,7 +73,11 @@ bool CApp::OnInit()
 	{
 		return false;
 	}
-	mSurface = SDL_GetWindowSurface(mWindow);
+	mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	if (mRenderer == nullptr)
+	{
+		return false;
+	}
 	if (!LoadResources())
 	{
 		return false;
@@ -83,25 +87,15 @@ bool CApp::OnInit()
 
 bool CApp::LoadResources()
 {
-	if (!LoadBackground())
+	mBackground = Utils::LoadImage("../assets/BackGround.jpg", mRenderer);
+	if (mBackground == nullptr)
 	{
 		return false;
 	}
-	if (!mRedCandy.LoadImage("../assets/Red.png"))
-	{
+	if (!mRedCandy.LoadTexture(mRenderer)) {
 		return false;
 	}
-	if (!mYellowCandy.LoadImage("../assets/Yellow.png"))
-	{
-		return false;
-	}
-	return true;
-}
-
-bool CApp::LoadBackground()
-{
-	mBackground = Utils::LoadImage("../assets/BackGround.jpg");
-	if (mBackground == nullptr) {
+	if (!mYellowCandy.LoadTexture(mRenderer)) {
 		return false;
 	}
 	return true;
@@ -109,13 +103,8 @@ bool CApp::LoadBackground()
 
 void CApp::RenderCandies()
 {
-	SDL_Rect pos;
-	pos.x = mRedCandy.getPos().x;
-	pos.y = mRedCandy.getPos().y;
-	SDL_BlitSurface(mRedCandy.getSurface(), nullptr, mSurface, &pos);
-	pos.x = mYellowCandy.getPos().x;
-	pos.y = mYellowCandy.getPos().y;
-	SDL_BlitSurface(mYellowCandy.getSurface(), nullptr, mSurface, &pos);
+	SDL_RenderCopy(mRenderer, mRedCandy.getImageTex(), nullptr, &mRedCandy.getRect());
+	SDL_RenderCopy(mRenderer, mYellowCandy.getImageTex(), nullptr, &mYellowCandy.getRect());
 }
 
 void CApp::OnEvent(SDL_Event* event)
@@ -158,16 +147,17 @@ void CApp::OnLoop(float delta_time)
 
 void CApp::OnRender()
 {
-	SDL_BlitSurface(mBackground, nullptr, mSurface, nullptr);
+	SDL_RenderClear(mRenderer);
+	SDL_RenderCopy(mRenderer, mBackground, nullptr, nullptr);
 	RenderCandies();
-	SDL_UpdateWindowSurface(mWindow);
+	SDL_RenderPresent(mRenderer);
 }
 
 void CApp::OnCleanup()
 {
-	SDL_FreeSurface(mSurface);
-	mSurface = nullptr;
-	SDL_FreeSurface(mBackground);
+	SDL_DestroyRenderer(mRenderer);
+	mRenderer = nullptr;
+	SDL_DestroyTexture(mBackground);
 	mBackground = nullptr;
 	SDL_DestroyWindow(mWindow);
 	mWindow = nullptr;

@@ -6,5 +6,5 @@
 
 namespace Utils
 {
-	SDL_Surface* LoadImage(const std::string& file_str);
+	SDL_Texture* LoadImage(const std::string& file_str, SDL_Renderer* renderer);
 }

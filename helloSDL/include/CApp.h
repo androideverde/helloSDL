@@ -22,15 +22,14 @@ public:
 	void OnCleanup();
 private:
 	bool mRunning;
-	SDL_Surface* mSurface;
-	SDL_Surface* mBackground;
 	SDL_Window* mWindow;
+	SDL_Renderer* mRenderer;
+	SDL_Texture* mBackground;
 	CCandy mRedCandy;
 	CCandy mYellowCandy;
 	const int MS_PER_UPDATE = 16;
 	bool mRotating;
 
-	bool LoadBackground();
 	bool LoadResources();
 	void RenderCandies();
 };
