@@ -11,12 +11,14 @@
 CApp::CApp()
 	: mRunning(true)
 	, mWindow(nullptr)
-	, mRedCandy(0, 0, 150, 100, "../assets/Red.png")
-	, mYellowCandy(400, 300, 0, 0, "../assets/Yellow.png")
+	, mRedCandy(0, 0, 150, 100, 0.f, "../assets/Red.png")
+	, mYellowCandy(400, 300, 0, 0, 0.f, "../assets/Yellow.png")
 	, mRotating(false)
 	, mRenderer(nullptr)
 	, mBackground(nullptr)
 {
+	mLastCandyX = mYellowCandy.getRect().x - mYellowCandy.getRect().w/2.f;
+	mLastCandyY = mYellowCandy.getRect().y - mYellowCandy.getRect().h/2.f;
 }
 
 // main entry point
@@ -49,7 +51,7 @@ int CApp::OnExecute()
 		
 		while (lag_ms >= MS_PER_UPDATE)
 		{
-			OnLoop(MS_PER_UPDATE / 1000.0f);
+			OnLoop(MS_PER_UPDATE / 1000.f);
 			lag_ms -= MS_PER_UPDATE;
 		}
 		OnRender();
@@ -104,7 +106,7 @@ bool CApp::LoadResources()
 void CApp::RenderCandies()
 {
 	SDL_RenderCopy(mRenderer, mRedCandy.getImageTex(), nullptr, &mRedCandy.getRect());
-	SDL_RenderCopy(mRenderer, mYellowCandy.getImageTex(), nullptr, &mYellowCandy.getRect());
+	SDL_RenderCopyEx(mRenderer, mYellowCandy.getImageTex(), nullptr, &mYellowCandy.getRect(), mYellowCandy.GetAngle(), nullptr, SDL_FLIP_NONE);
 }
 
 void CApp::OnEvent(SDL_Event* event)
@@ -119,15 +121,17 @@ void CApp::OnExit()
 
 void CApp::OnMouseMove(int x, int y, int delta_x, int delta_y, bool l_button, bool r_button, bool m_button)
 {
-	if (mRotating)
-	{
-		mYellowCandy.SetPos(x, y);
-	}
+	mLastMousePos.x = x - mYellowCandy.getRect().w/2.f;
+	mLastMousePos.y = y - mYellowCandy.getRect().h/2.f;
 }
 
 void CApp::OnLButtonDown(int x, int y)
 {
-	mRotating ? mRotating = false : mRotating = true;
+	mRotating = !mRotating;
+	if (!mRotating)
+	{
+		mYellowCandy.SetAngle(0.f);
+	}
 }
 
 void CApp::OnRButtonDown(int x, int y)
@@ -140,9 +144,14 @@ void CApp::OnMButtonDown(int x, int y)
 
 void CApp::OnLoop(float delta_time)
 {
-	int delta_x = mRedCandy.getVelocity()[0] * delta_time;
-	int delta_y = mRedCandy.getVelocity()[1] * delta_time;
-	mRedCandy.MoveBy(delta_x, delta_y);
+	mRedCandy.MoveBy(mRedCandy.getVelocity()[0] * delta_time, mRedCandy.getVelocity()[1] * delta_time);
+	if (mRotating)
+	{
+		mYellowCandy.Rotate(20.f * delta_time);
+		mLastCandyX += (mLastMousePos.x - mLastCandyX) * 0.4f * delta_time;
+		mLastCandyY += (mLastMousePos.y - mLastCandyY) * 0.4f * delta_time;
+		mYellowCandy.SetPos(static_cast<int>(mLastCandyX), static_cast<int>(mLastCandyY));
+	}
 }
 
 void CApp::OnRender()

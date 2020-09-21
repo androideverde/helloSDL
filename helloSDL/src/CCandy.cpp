@@ -2,11 +2,12 @@
 
 #include <Utils.h>
 
-CCandy::CCandy(int x, int y, int vx, int vy, const std::string& imagePath)
+CCandy::CCandy(int x, int y, int vx, int vy, float angle, const std::string& imagePath)
 	: mRect{x, y, 0, 0}
 	, mVelocity{vx, vy}
 	, mImagePath(imagePath)
 	, mImageTex(nullptr)
+	, mAngle(angle)
 {
 }
 
@@ -39,4 +40,14 @@ void CCandy::SetPos(int x, int y)
 {
 	mRect.x = x;
 	mRect.y = y;
+}
+
+void CCandy::SetAngle(const float angle)
+{
+	mAngle = angle;
+}
+
+void CCandy::Rotate(const float angle)
+{
+	mAngle += angle;
 }

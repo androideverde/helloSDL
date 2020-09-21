@@ -29,6 +29,9 @@ private:
 	CCandy mYellowCandy;
 	const int MS_PER_UPDATE = 16;
 	bool mRotating;
+	SDL_Point mLastMousePos;
+	float mLastCandyX = 0.f;
+	float mLastCandyY = 0.f;
 
 	bool LoadResources();
 	void RenderCandies();
