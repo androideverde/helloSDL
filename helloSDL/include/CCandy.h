@@ -9,10 +9,10 @@ public:
 	~CCandy();
 	void MoveBy(int delta_x, int delta_y);
 	void SetPos(int x, int y);
-	const SDL_Rect& getRect() const { return mRect; }
-	std::vector<int> getVelocity() const { return mVelocity; }
-	const std::string& getImagePath() const { return mImagePath; }
-	SDL_Texture* getImageTex() const { return mImageTex; }
+	const SDL_Rect& GetRect() const { return mRect; }
+	std::vector<int> GetVelocity() const { return mVelocity; }
+	const std::string& GetImagePath() const { return mImagePath; }
+	SDL_Texture* GetImageTex() const { return mImageTex; }
 	const float GetAngle() const { return mAngle; }
 	void SetAngle(const float angle);
 	void Rotate(const float angle);

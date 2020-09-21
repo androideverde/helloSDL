@@ -17,8 +17,8 @@ CApp::CApp()
 	, mRenderer(nullptr)
 	, mBackground(nullptr)
 {
-	mLastCandyX = mYellowCandy.getRect().x - mYellowCandy.getRect().w/2.f;
-	mLastCandyY = mYellowCandy.getRect().y - mYellowCandy.getRect().h/2.f;
+	mLastCandyX = mYellowCandy.GetRect().x - mYellowCandy.GetRect().w/2.f;
+	mLastCandyY = mYellowCandy.GetRect().y - mYellowCandy.GetRect().h/2.f;
 }
 
 // main entry point
@@ -105,8 +105,8 @@ bool CApp::LoadResources()
 
 void CApp::RenderCandies()
 {
-	SDL_RenderCopy(mRenderer, mRedCandy.getImageTex(), nullptr, &mRedCandy.getRect());
-	SDL_RenderCopyEx(mRenderer, mYellowCandy.getImageTex(), nullptr, &mYellowCandy.getRect(), mYellowCandy.GetAngle(), nullptr, SDL_FLIP_NONE);
+	SDL_RenderCopy(mRenderer, mRedCandy.GetImageTex(), nullptr, &mRedCandy.GetRect());
+	SDL_RenderCopyEx(mRenderer, mYellowCandy.GetImageTex(), nullptr, &mYellowCandy.GetRect(), mYellowCandy.GetAngle(), nullptr, SDL_FLIP_NONE);
 }
 
 void CApp::OnEvent(SDL_Event* event)
@@ -121,8 +121,8 @@ void CApp::OnExit()
 
 void CApp::OnMouseMove(int x, int y, int delta_x, int delta_y, bool l_button, bool r_button, bool m_button)
 {
-	mLastMousePos.x = x - mYellowCandy.getRect().w/2.f;
-	mLastMousePos.y = y - mYellowCandy.getRect().h/2.f;
+	mLastMousePos.x = x - mYellowCandy.GetRect().w/2.f;
+	mLastMousePos.y = y - mYellowCandy.GetRect().h/2.f;
 }
 
 void CApp::OnLButtonDown(int x, int y)
@@ -144,7 +144,7 @@ void CApp::OnMButtonDown(int x, int y)
 
 void CApp::OnLoop(float delta_time)
 {
-	mRedCandy.MoveBy(mRedCandy.getVelocity()[0] * delta_time, mRedCandy.getVelocity()[1] * delta_time);
+	mRedCandy.MoveBy(mRedCandy.GetVelocity()[0] * delta_time, mRedCandy.GetVelocity()[1] * delta_time);
 	if (mRotating)
 	{
 		mYellowCandy.Rotate(20.f * delta_time);
